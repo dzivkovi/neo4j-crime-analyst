@@ -189,6 +189,7 @@ BEFORE presenting results:
 3. Could this mislead an investigator?
 4. What assumptions were made?
 5. What limitations exist?
+6. MANDATORY: Include exact Cypher queries for reproducibility
 ```
 
 ## RESPONSE TEMPLATE 2.0
@@ -218,6 +219,97 @@ BEFORE presenting results:
 
 ### Technical Notes
 [Any caveats, limitations, or assumptions]
+
+### Investigation Queries
+*Copy these queries into Neo4j Browser (http://localhost:7474/browser/) to verify results*
+
+#### Method 1 Query: [Method Name]
+```cypher
+[Exact query that produced Method 1 results]
+```
+
+#### Method 2 Query: [Method Name]
+```cypher
+[Exact query that produced Method 2 results]
+```
+
+#### Method 3 Query: [Method Name]
+```cypher
+[Exact query that produced Method 3 results]
+```
+
+*Note: If a method required multiple queries in sequence, all steps are shown above in order.*
+```
+
+### EXAMPLE: Investigation Queries Section
+
+```markdown
+### Investigation Queries
+*Copy these queries into Neo4j Browser (http://localhost:7474/browser/) to verify results*
+
+#### Method 1 Query: Direct Connection Search
+```cypher
+// Finds all combinations of Omar and Amy entities and their connections
+MATCH (omar:Person) WHERE omar.name =~ '(?i).*omar.*'
+MATCH (amy:Person) WHERE amy.name =~ '(?i).*amy.*'
+WITH omar, amy
+OPTIONAL MATCH path1 = (omar)-[:PARTICIPATED_IN]->(s:Session)<-[:PARTICIPATED_IN]-(amy)
+OPTIONAL MATCH path2 = (omar)-[:USES]->(p:Phone)-[:PARTICIPATED_IN]->(s2:Session)<-[:PARTICIPATED_IN]-(p2:Phone)<-[:USES]-(amy)
+WITH omar, amy, 
+     collect(DISTINCT s) as sharedSessions,
+     collect(DISTINCT s2) as phoneSharedSessions
+RETURN 
+    omar.name as Omar,
+    amy.name as Amy,
+    size(sharedSessions) as directSharedSessions,
+    size(phoneSharedSessions) as phoneBasedSharedSessions,
+    CASE 
+        WHEN size(sharedSessions) > 0 OR size(phoneSharedSessions) > 0 
+        THEN 'DIRECT CONNECTION FOUND'
+        ELSE 'NO DIRECT CONNECTION'
+    END as connectionStatus;
+```
+
+#### Method 2 Query: Detailed Call Analysis
+```cypher
+// Shows actual phone calls with timestamps and durations
+MATCH (omar:Person {name: "@Omar Fisher"})-[:USES]->(oPhone:Phone)
+MATCH (amy:Person) WHERE amy.name IN ["@Amy Miller", "@Amy Saunders"]
+MATCH (amy)-[:USES]->(aPhone:Phone)
+MATCH (oPhone)-[:PARTICIPATED_IN]->(s:Session)<-[:PARTICIPATED_IN]-(aPhone)
+WITH omar, amy, s, oPhone, aPhone
+ORDER BY s.starttime DESC
+LIMIT 20
+RETURN 
+    omar.name as Omar,
+    amy.name as Amy,
+    oPhone.number as OmarPhone,
+    aPhone.number as AmyPhone,
+    s.starttime as SessionTime,
+    s.durationinseconds as Duration,
+    s.sessiontype as Type,
+    s.direction as Direction,
+    substring(s.previewcontent, 0, 100) as Preview;
+```
+
+#### Method 3 Query: Communication Pattern Analysis
+```cypher
+// Calculates percentage of calls between Omar and Amy
+MATCH (omar:Person {name: '@Omar Fisher'})-[:USES]->(op:Phone)-[:PARTICIPATED_IN]->(s:Session)
+WITH omar, count(DISTINCT s) as omarTotalSessions
+MATCH (amy:Person {name: '@Amy Miller'})-[:USES]->(ap:Phone)-[:PARTICIPATED_IN]->(s2:Session)  
+WITH omar, amy, omarTotalSessions, count(DISTINCT s2) as amyTotalSessions
+MATCH (omar)-[:USES]->(op2:Phone)-[:PARTICIPATED_IN]->(shared:Session)<-[:PARTICIPATED_IN]-(ap2:Phone)<-[:USES]-(amy)
+WITH omar, amy, omarTotalSessions, amyTotalSessions, count(DISTINCT shared) as sharedSessions
+RETURN 
+    omar.name as Omar,
+    amy.name as Amy,
+    omarTotalSessions as OmarTotalCalls,
+    amyTotalSessions as AmyTotalCalls,
+    sharedSessions as SharedCalls,
+    round(100.0 * sharedSessions / omarTotalSessions, 2) as PercentOfOmarCalls,
+    round(100.0 * sharedSessions / amyTotalSessions, 2) as PercentOfAmyCalls;
+```
 ```
 
 ## INSUFFICIENT CONFIDENCE RESPONSE
@@ -261,6 +353,7 @@ When results are not satisfactory:
 [ ] Limitations explicitly stated
 [ ] No overfitting to expected answers
 [ ] Answer could not mislead investigators
+[ ] Exact Cypher queries included for each method
 ```
 
 ## COMMON QUESTION PATTERNS
