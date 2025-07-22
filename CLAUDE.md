@@ -281,6 +281,36 @@ gh issue view 28  # Verify issue exists before creating fix/28-*
 - NEVER write Cypher queries into files without first validating them using the MCP Neo4j server
 - ALWAYS test Cypher queries with MCP Neo4j server before documenting them
 
+### GDS (Graph Data Science) Algorithm Rules
+When using GDS algorithms for investigations:
+
+1. **ALWAYS check schema first** - Never assume relationship types exist
+   ```cypher
+   MATCH (n)-[r]-() RETURN DISTINCT labels(n), type(r), count(r)
+   ```
+
+2. **Use Cypher projection for indirect relationships** - Person nodes connect via Phone/Session
+   ```cypher
+   CALL gds.graph.project.cypher(
+     'person-communication',
+     'MATCH (p:Person) RETURN id(p) AS id',
+     'MATCH (p1:Person)-[:USES]->(:Phone)-[:PARTICIPATED_IN]->(:Session)<-[:PARTICIPATED_IN]-(:Phone)<-[:USES]-(p2:Person)
+      WHERE p1 <> p2
+      RETURN DISTINCT id(p1) AS source, id(p2) AS target'
+   )
+   ```
+
+3. **Common GDS algorithms for investigations**:
+   - **Betweenness Centrality**: Find information brokers/bridges
+   - **PageRank**: Identify influential nodes
+   - **Community Detection (Louvain)**: Find criminal groups
+   - **Shortest Path**: Trace connections between suspects
+
+4. **Clean up projections** - Always drop after use
+   ```cypher
+   CALL gds.graph.drop('graph-name', false)
+   ```
+
 ## Defensive Programming Requirements
 **MANDATORY validation for EVERY code change**:
 
