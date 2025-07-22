@@ -97,6 +97,7 @@ Each sub-agent should:
 - Choose the most appropriate algorithm
 - Execute the investigation
 - Return results with confidence levels
+- **CRITICAL**: When returning queries, COPY-PASTE the EXACT query that worked (never "clean up" for presentation)
 ```
 
 **The 80/20 Rule**: One sub-agent should focus on simple approaches that deliver 80% of value quickly
@@ -244,19 +245,26 @@ BEFORE presenting results:
 ### Investigation Queries
 *Copy these queries into Neo4j Browser (http://localhost:7474/browser/) to verify results*
 
+**🚨 CRITICAL DOCUMENTATION RULE**: 
+- NEVER "clean up" or modify working queries for presentation
+- Copy-paste the EXACT query that produced your results
+- Include ALL WITH clauses, ORDER BY positions, and LIMIT statements
+- If using aggregations like collect(), ensure ORDER BY variables are in RETURN clause
+- TEST each query before including it in the report
+
 #### Method 1 Query: [Method Name]
 ```cypher
-[Exact query that produced Method 1 results]
+[Exact query that produced Method 1 results - COPY/PASTE, DO NOT MODIFY]
 ```
 
 #### Method 2 Query: [Method Name]
 ```cypher
-[Exact query that produced Method 2 results]
+[Exact query that produced Method 2 results - COPY/PASTE, DO NOT MODIFY]
 ```
 
 #### Method 3 Query: [Method Name]
 ```cypher
-[Exact query that produced Method 3 results]
+[Exact query that produced Method 3 results - COPY/PASTE, DO NOT MODIFY]
 ```
 
 *Note: If a method required multiple queries in sequence, all steps are shown above in order.*
