@@ -1,0 +1,8 @@
+# Neo4j Crime Investigator's Shell Requirements
+# Minimal dependencies for Neo4j connectivity
+
+# Neo4j Python driver for database connectivity
+neo4j>=5.0.0
+
+# Optional: For local development and testing
+python-dotenv>=1.0.0

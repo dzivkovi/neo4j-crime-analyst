@@ -1,0 +1,47 @@
+# python
+.venv/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Test results
+*.coverage
+.benchmarks/
+
+# work folders
+work/
+data/
+
+# Backup files (NEVER commit client data!)
+backups/
+*.dump
+*.tar.gz
+
+# temporary conversation files
+analysis/*/conversations/
+analysis/**/2025-*/
+# archived documents
+analysis/**/archive/
+
+# starter design docs (later moved to analysis/<issue#>/DESIGN.md)
+analysis/0000/DESIGN*.md
+
+# notebooks / checkpoints
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+
+# dotenv / secrets
+.env
+
+# Claude settings
+.claude/settings.local.json
+
+# GenAI Research (keep local only)
+research/

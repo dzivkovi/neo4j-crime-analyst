@@ -1,0 +1,5 @@
+kimi() {
+  export ANTHROPIC_BASE_URL="https://api.moonshot.ai/anthropic/"
+  export ANTHROPIC_AUTH_TOKEN="your-kimi-api-key"
+  claude "$@"
+}
