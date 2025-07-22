@@ -8,6 +8,9 @@ This is a Neo4j-based surveillance analytics documentation and reference reposit
 
 **Note**: This repository contains documentation, query examples, and configuration.
 
+## Container Name - CRITICAL
+**ALWAYS use `neo4j-gantry` as the container name** (via `CASENAME=gantry`). Never use `neo4j-default` or any other name. This repository is specifically for the 'gantry' case dataset.
+
 ## Design Principles
 - Follow **Perfection is achieved, not when there is nothing more to add, but when there is nothing left to take away** advice by Antoine de Saint-Exupéry.
 - **Optimize for User Interaction Pattern**: Before structuring anything, ask "How will users interact with this?" Browsing/scanning tasks favor flat layouts that minimize cognitive load; direct navigation tasks can use logical hierarchy.
@@ -24,8 +27,10 @@ This is a Neo4j-based surveillance analytics documentation and reference reposit
 
 ### Neo4j Docker Operations (When Using Docker)
 ```bash
+# IMPORTANT: Default case is 'gantry' - never use 'default' or other names
 # Set container name
-export NEO_NAME="neo4j-default"
+export CASENAME=gantry
+export NEO_NAME="neo4j-${CASENAME}"
 
 # Quick connection test
 docker exec -it ${NEO_NAME} cypher-shell -u neo4j -p Sup3rSecur3!

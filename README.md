@@ -46,7 +46,8 @@ See [MCP Setup Guide](docs/mcp.md) for configuration details.
 ### 2. Docker Desktop CLI (Fallback)
 When MCP fails, use Docker commands:
 ```bash
-export NEO_NAME="neo4j-gantry"  # Or neo4j-$CASENAME
+export CASENAME=gantry  # Default case name
+export NEO_NAME="neo4j-${CASENAME}"
 docker exec -i ${NEO_NAME} cypher-shell -u neo4j -p Sup3rSecur3! < queries/investigative.cypher
 ```
 
