@@ -70,16 +70,36 @@ RETURN d.name as dataset, d.containerName as container
    - If not available, focus on text search approaches
 2. Use MCP tools to understand schema
 3. ULTRA THINK: What is the investigator really asking?
-4. ULTRA THINK: Design 2-3 parallel approaches (MANDATORY)
+4. ULTRA THINK: Design 2-3 investigation tasks for sub-agents (MANDATORY)
    - Which algorithms reveal truth vs artifacts?
    - What biases might each approach have?
    - How might criminals try to hide?
 5. Check if Context7 docs needed for syntax
 ```
 
-### Step 2: Parallel Approach Execution (MANDATORY 2-3 APPROACHES)
+### Step 2: Sub-Agent Deployment for Investigation Approaches
 
-**The 80/20 Rule**: Simple approach should deliver 80% of value quickly
+**MANDATORY: Use Task Tool for True Parallel Execution**
+
+Deploy 2-3 sub-agents using the Task tool to investigate simultaneously:
+
+```
+ULTRA THINK about the investigation question, then:
+
+1. Create 2-3 investigation tasks based on the specific question
+2. Deploy sub-agents using the Task tool for each approach:
+   - Task Agent 1: "Investigate using simple direct queries for [specific aspect]"
+   - Task Agent 2: "Investigate using advanced algorithms for [specific aspect]"  
+   - Task Agent 3: "Investigate using [appropriate method] for [specific aspect]"
+
+Each sub-agent should:
+- Independently analyze the question
+- Choose the most appropriate algorithm
+- Execute the investigation
+- Return results with confidence levels
+```
+
+**The 80/20 Rule**: One sub-agent should focus on simple approaches that deliver 80% of value quickly
 
 **Criminal Investigation Priorities**:
 1. **Start Simple** - Criminals make obvious mistakes:
@@ -87,7 +107,7 @@ RETURN d.name as dataset, d.containerName as container
    - High frequency communication (>1000 interactions)
    - Centralized communication patterns
 
-2. **Add Advanced** (always run in parallel):
+2. **Add Advanced** - Other sub-agents explore deeper:
    - Vector search (PREFER over text search)
    - GDS algorithms when they add value
    - APOC for complex path operations
@@ -139,15 +159,16 @@ MATCH (b:Content {sessionguid: a.sessionguid})  // Safe!
 **TIMEOUT STRATEGY - Be Generous for Wow Moments**:
 - **30-second timeout**: For EACH individual Cypher query
 - **Overall investigation**: 2 MINUTES (120 seconds) - everyone can wait for wow!
-- **Parallel execution**: All 2-3 approaches run simultaneously
+- **Sub-agent execution**: All 2-3 sub-agents run simultaneously via Task tool
 
 ```
-For each approach (run in parallel):
+Each sub-agent should:
 1. Check query follows "If you MATCH twice, LIMIT once" rule
 2. Execute with 30-second timeout
 3. If no results or timeout, simplify query (add LIMIT, reduce scope)
 4. Use vector search when possible (score > 0.7)
 5. Capture results and execution time
+6. Return findings to orchestrator
 ```
 
 ### Step 4: Validation Against Criminal Patterns
@@ -346,8 +367,8 @@ When results are not satisfactory:
 ```
 [ ] Schema researched and understood
 [ ] Question interpreted without assumptions
-[ ] 2-3 approaches designed independently
-[ ] Each approach executed with timeout
+[ ] 2-3 sub-agent tasks created via Task tool
+[ ] Each sub-agent executed independently with timeout
 [ ] Results validated for logical consistency
 [ ] Confidence level assessed objectively
 [ ] Limitations explicitly stated
@@ -403,6 +424,27 @@ When results are not satisfactory:
 2. Try vector/semantic search
 3. Broaden search criteria
 4. Report "insufficient data" if true
+```
+
+### DateTime Type Errors
+```
+**Common Error**: "Expected a string value for `substring`, but got: 2023-03-01T21:22:19Z"
+
+Session.starttime is a DateTime type, not a string!
+
+❌ WRONG:
+substring(s.starttime, 11, 2)  // TypeError!
+
+✅ CORRECT:
+substring(toString(s.starttime), 11, 2)  // Converts DateTime to string first
+
+**Other DateTime fields that need toString():**
+- Session.starttime
+- Session.endtime
+- Any timestamp fields
+
+**Example: Late-night session analysis**
+WHERE toInteger(substring(toString(s.starttime), 11, 2)) >= 23
 ```
 
 ## ALGORITHM USAGE PRIORITIES
@@ -524,7 +566,7 @@ CALL apoc.algo.cover(...) // Relationship coverage
 ## REMEMBER
 
 **You are helping solve real criminal investigations. Every answer must be:**
-- Based on 2-3 parallel approaches (MANDATORY)
+- Based on 2-3 sub-agent investigations via Task tool (MANDATORY)
 - Accurate or explicitly uncertain
 - Focused on actionable intelligence
 - Clear about confidence levels and timing
@@ -533,7 +575,7 @@ CALL apoc.algo.cover(...) // Relationship coverage
 
 **Core Principles**:
 1. ULTRA THINK: Criminals make obvious mistakes - start simple
-2. ULTRA THINK: Run advanced in parallel for validation
+2. ULTRA THINK: Deploy sub-agents for independent validation
 3. ULTRA THINK: Vector search > full-text index > NEVER substring/CONTAINS
 4. ULTRA THINK: Trust patterns over statistics (avoid artifacts)
 5. ULTRA THINK: Context7 docs prevent wasted time on syntax
