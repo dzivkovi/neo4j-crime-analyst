@@ -1,0 +1,26 @@
+{
+  "LOG": false,
+  "OPENAI_API_KEY": "",
+  "OPENAI_BASE_URL": "",
+  "OPENAI_MODEL": "",
+  "Providers": [
+    {
+      "name": "Mistral",
+      "api_base_url": "https://openrouter.ai/api/v1/chat/completions",
+      "api_key": "your-openrouter-api-key",
+      "models": [
+        "mistralai/magistral-medium-2506",
+        "mistralai/magistral-small-2506",
+        "mistralai/mistral-large-2411",
+        "mistralai/mistral-medium-3"
+      ],
+      "transformer": {
+        "use": ["openrouter", "middle-out"]
+
+      }
+    }
+  ],
+  "Router": {
+    "default": "Mistral,mistralai/mistral-large-2411"
+  }
+}
